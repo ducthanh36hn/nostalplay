@@ -3,6 +3,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 import '../../app/theme.dart';
+import '../l10n/strings.dart';
 import 'ads_controller.dart';
 
 /// Banner ad slot (320x50). Waits for consent, keeps its height whether or not
@@ -64,7 +65,7 @@ class _AdBannerState extends State<AdBanner> {
     if (!_ads.enabled) return const SizedBox.shrink();
     final ad = _ad;
     return Semantics(
-      label: 'Quảng cáo',
+      label: context.s.adSemantics,
       child: Container(
         height: AdBanner.height + 8,
         alignment: Alignment.center,

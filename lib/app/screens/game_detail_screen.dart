@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/game_definition.dart';
+import '../../core/l10n/strings.dart';
 import '../../core/storage/app_storage.dart';
 import '../routes.dart';
 import '../theme.dart';
@@ -32,11 +33,11 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
                 children: [
                   _preview(),
                   const SizedBox(height: 12),
-                  _bestBadge(best),
+                  _bestBadge(context, best),
                   const SizedBox(height: 16),
-                  _rules(game),
+                  _rules(context, game),
                   const SizedBox(height: 16),
-                  _controls(game),
+                  _controls(context, game),
                 ],
               ),
             ),
@@ -69,14 +70,14 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
     );
   }
 
-  Widget _bestBadge(int best) {
+  Widget _bestBadge(BuildContext context, int best) {
     return _Card(
       child: Row(
         children: [
           const Icon(Icons.emoji_events, color: NpColors.primary, size: 22),
           const SizedBox(width: 8),
           Text(
-            best > 0 ? 'BEST: $best' : 'CHƯA CÓ KỶ LỤC',
+            best > 0 ? context.s.bestUpper(best) : context.s.noRecordUpper,
             style: const TextStyle(
               fontFamily: kMono,
               fontWeight: FontWeight.w700,
@@ -89,15 +90,16 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
     );
   }
 
-  Widget _rules(GameDefinition game) {
+  Widget _rules(BuildContext context, GameDefinition game) {
+    final texts = game.textsFor(context.s.language);
     return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Expanded(child: _SectionTitle('LUẬT CHƠI')),
-              if (game.gridInfo != null)
+              Expanded(child: _SectionTitle(context.s.rulesTitle)),
+              if (texts.gridInfo != null)
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -105,7 +107,7 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
                   ),
                   color: NpColors.surface,
                   child: Text(
-                    game.gridInfo!,
+                    texts.gridInfo!,
                     style: const TextStyle(
                       fontFamily: kMono,
                       fontSize: 11,
@@ -117,7 +119,7 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            game.rules,
+            texts.rules,
             style: const TextStyle(
               fontFamily: kSans,
               fontSize: 15,
@@ -130,12 +132,13 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
     );
   }
 
-  Widget _controls(GameDefinition game) {
+  Widget _controls(BuildContext context, GameDefinition game) {
+    final texts = game.textsFor(context.s.language);
     return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionTitle('ĐIỀU KHIỂN'),
+          _SectionTitle(context.s.controlsTitle),
           const SizedBox(height: 12),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +147,7 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
                 child: _ControlTile(
                   leading: const _MiniDPad(),
                   title: 'D-PAD',
-                  hint: game.dpadHint,
+                  hint: texts.dpadHint,
                 ),
               ),
               const SizedBox(width: 12),
@@ -153,16 +156,16 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
                   children: [
                     _ControlTile(
                       leading: const _MiniButton('A', used: true),
-                      title: 'NÚT A',
-                      hint: game.aHint,
+                      title: context.s.buttonATitle,
+                      hint: texts.aHint,
                       row: true,
                     ),
                     const SizedBox(height: 8),
                     _ControlTile(
-                      leading: _MiniButton('B', used: game.bHint != null),
-                      title: 'NÚT B',
-                      hint: game.bHint ?? 'Không dùng',
-                      dim: game.bHint == null,
+                      leading: _MiniButton('B', used: texts.bHint != null),
+                      title: context.s.buttonBTitle,
+                      hint: texts.bHint ?? context.s.notUsed,
+                      dim: texts.bHint == null,
                       row: true,
                     ),
                   ],
@@ -353,7 +356,7 @@ class _PlayButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: 'Chơi',
+      label: context.s.playSemantics,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
@@ -366,14 +369,14 @@ class _PlayButton extends StatelessWidget {
               BoxShadow(color: Color(0xFF516600), offset: Offset(0, 4)),
             ],
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.play_arrow, color: NpColors.onPrimary),
-              SizedBox(width: 8),
+              const Icon(Icons.play_arrow, color: NpColors.onPrimary),
+              const SizedBox(width: 8),
               Text(
-                'PLAY',
-                style: TextStyle(
+                context.s.play,
+                style: const TextStyle(
                   fontFamily: kMono,
                   fontWeight: FontWeight.w700,
                   fontSize: 20,

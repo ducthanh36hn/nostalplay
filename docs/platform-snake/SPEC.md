@@ -63,6 +63,8 @@ Người dùng: người chơi phổ thông, thích cảm giác máy game điệ
 
 ## 5. Yêu cầu phi chức năng
 
+- **NFR-0** Ngôn ngữ (2026-11-06): giao diện có tiếng Việt và tiếng Anh. Mặc định theo ngôn ngữ điện thoại (vi → tiếng Việt, còn lại → tiếng Anh); có thể chọn riêng trong Cài đặt, lưu ở `v1:settings:language`. Chuỗi nằm ở `lib/core/l10n/strings.dart`; chữ riêng từng game nằm trong `GameDefinition.translations`.
+
 - **NFR-1** Nền tảng: iOS 14+ và Android 7.0+ (API 24), portrait. Phiên bản này chốt chính xác khi tạo project.
 - **NFR-2** Hiệu năng: 60 fps ổn định trên máy tầm trung; Snake không giật khi giữ nút.
 - **NFR-3** Độ trễ nút → đổi hướng thấy được trong tick kế tiếp (tick ≤ 200 ms).

@@ -13,6 +13,7 @@ class AppStorage {
   static String bestKey(String gameId) => 'v1:$gameId:best';
   static const soundKey = 'v1:settings:sound';
   static const hapticsKey = 'v1:settings:haptics';
+  static const languageKey = 'v1:settings:language';
 
   int bestScore(String gameId) => _prefs.getInt(bestKey(gameId)) ?? 0;
 
@@ -21,6 +22,11 @@ class AppStorage {
 
   bool get soundEnabled => _prefs.getBool(soundKey) ?? true;
   bool get hapticsEnabled => _prefs.getBool(hapticsKey) ?? true;
+
+  /// 'auto', 'vi' or 'en'.
+  String get languageSetting => _prefs.getString(languageKey) ?? 'auto';
+  Future<void> setLanguageSetting(String value) =>
+      _prefs.setString(languageKey, value);
 
   Future<void> setSoundEnabled(bool value) => _prefs.setBool(soundKey, value);
   Future<void> setHapticsEnabled(bool value) =>

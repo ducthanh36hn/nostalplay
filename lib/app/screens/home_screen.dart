@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/ads/ad_banner.dart';
+import '../../core/widgets/handheld_icon.dart';
 import '../../core/game_definition.dart';
+import '../../core/l10n/strings.dart';
 import '../../core/storage/app_storage.dart';
 import '../routes.dart';
 import '../theme.dart';
@@ -55,32 +57,20 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Row(
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: NpColors.lcdDeep,
-              border: Border.all(color: NpColors.lcdDark, width: 2),
-            ),
-            child: const Icon(
-              Icons.sports_esports,
-              size: 22,
-              color: NpColors.lcdBright,
-            ),
-          ),
+          const HandheldIcon(size: 40),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('NOSTALPLAY', style: text.headlineMedium),
-                Text('Chọn băng để chơi', style: text.bodyMedium),
+                Text(context.s.homeSubtitle, style: text.bodyMedium),
               ],
             ),
           ),
           Semantics(
             button: true,
-            label: 'Cài đặt',
+            label: context.s.settings,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () => Navigator.of(context).pushNamed(Routes.settings),
@@ -116,7 +106,7 @@ class _GameCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: '${game.title}, ${best > 0 ? 'kỷ lục $best' : 'chưa có kỷ lục'}',
+      label: context.s.gameCardSemantics(game.title, best),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
@@ -153,7 +143,7 @@ class _GameCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      best > 0 ? 'Best: $best' : 'New game',
+                      best > 0 ? context.s.bestLabel(best) : context.s.newGame,
                       style: const TextStyle(
                         fontFamily: kMono,
                         fontWeight: FontWeight.w700,

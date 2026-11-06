@@ -6,6 +6,7 @@ import '../../core/game_action.dart';
 import '../../core/game_definition.dart';
 import '../../core/game_input.dart';
 import '../../core/game_session.dart';
+import '../../core/l10n/strings.dart';
 import '../../core/settings_controller.dart';
 import '../../core/storage/app_storage.dart';
 import '../../core/widgets/console_shell.dart';
@@ -203,7 +204,7 @@ class _GameScreenState extends State<GameScreen> {
       onTap: _session.start,
       // Above the middle row so the snake and apple stay visible.
       child: _overlay(
-        const LcdBadge(text: 'NHẤN A ĐỂ CHƠI'),
+        LcdBadge(text: context.s.pressAToPlay),
         alignment: const Alignment(0, -0.6),
       ),
     );
@@ -214,24 +215,24 @@ class _GameScreenState extends State<GameScreen> {
     return _overlay(
       dim: true,
       LcdDialog(
-        title: 'Tạm dừng',
+        title: context.s.pause,
         children: [
           LcdButton(
-            label: 'Tiếp tục',
+            label: context.s.resume,
             primary: _pauseIndex == 0,
             hint: _pauseIndex == 0 ? 'A' : null,
             onPressed: () => _activatePauseItem(0),
           ),
           const SizedBox(height: 8),
           LcdButton(
-            label: 'Chơi lại',
+            label: context.s.restart,
             primary: _pauseIndex == 1,
             hint: _pauseIndex == 1 ? 'A' : null,
             onPressed: () => _activatePauseItem(1),
           ),
           const SizedBox(height: 8),
           LcdButton(
-            label: 'Về menu',
+            label: context.s.toMenu,
             primary: _pauseIndex == 2,
             hint: _pauseIndex == 2 ? 'A' : null,
             onPressed: () => _activatePauseItem(2),
@@ -243,14 +244,14 @@ class _GameScreenState extends State<GameScreen> {
             children: [
               LcdToggle(
                 icon: Icons.volume_up,
-                label: 'Âm thanh',
+                label: context.s.sound,
                 value: settings.soundEnabled,
                 selected: _pauseIndex == 3,
                 onChanged: settings.setSound,
               ),
               LcdToggle(
                 icon: Icons.vibration,
-                label: 'Rung',
+                label: context.s.vibration,
                 value: settings.hapticsEnabled,
                 selected: _pauseIndex == 4,
                 onChanged: settings.setHaptics,
@@ -265,27 +266,25 @@ class _GameScreenState extends State<GameScreen> {
   Widget _gameOver() {
     return _overlay(
       LcdDialog(
-        title: _session.won ? 'Hoàn hảo!' : 'Game over',
+        title: _session.won ? context.s.perfect : context.s.gameOver,
         children: [
           if (_session.newRecord) ...[
-            const Center(
-              child: LcdBadge(text: '★ KỶ LỤC MỚI! ★', inverted: true),
-            ),
+            Center(child: LcdBadge(text: context.s.newRecord, inverted: true)),
             const SizedBox(height: 8),
           ],
-          _stat('Điểm', _session.score),
+          _stat(context.s.scoreLabel, _session.score),
           const SizedBox(height: 4),
-          _stat('Kỷ lục (best)', _session.best),
+          _stat(context.s.bestLabelShort, _session.best),
           const SizedBox(height: 10),
           LcdButton(
-            label: 'Chơi lại',
+            label: context.s.restart,
             primary: _overIndex == 0,
             hint: _overIndex == 0 ? 'A' : null,
             onPressed: _playAgain,
           ),
           const SizedBox(height: 8),
           LcdButton(
-            label: 'Về menu',
+            label: context.s.toMenu,
             primary: _overIndex == 1,
             hint: _overIndex == 1 ? 'A' : null,
             onPressed: _leave,

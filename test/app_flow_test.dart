@@ -18,7 +18,10 @@ Future<void> _pumpApp(
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  SharedPreferences.setMockInitialValues(prefs);
+  SharedPreferences.setMockInitialValues({
+    'v1:settings:language': 'vi',
+    ...prefs,
+  });
   await tester.pumpWidget(
     NostalPlayApp(
       storage: await AppStorage.load(),
@@ -59,7 +62,7 @@ void main() {
   ) async {
     await _pumpApp(tester);
     expect(find.text('FAKE'), findsOneWidget);
-    expect(find.text('New game'), findsOneWidget);
+    expect(find.text('Game mới'), findsOneWidget);
 
     await _openGame(tester);
     await _tapButton(tester, 'A'); // start
@@ -72,18 +75,18 @@ void main() {
     await _dpadDown(tester);
     await _tapButton(tester, 'A'); // Về menu -> detail
     await tester.pumpAndSettle();
-    expect(find.text('BEST: 20'), findsOneWidget);
+    expect(find.text('KỶ LỤC: 20'), findsOneWidget);
     await tester.tap(find.byIcon(Icons.arrow_back));
     await tester.pumpAndSettle();
-    expect(find.text('Best: 20'), findsOneWidget);
+    expect(find.text('Kỷ lục: 20'), findsOneWidget);
   });
 
   testWidgets('detail shows rules, controls and best', (tester) async {
     await _pumpApp(tester, prefs: {'v1:fake:best': 90});
-    expect(find.text('Best: 90'), findsOneWidget);
+    expect(find.text('Kỷ lục: 90'), findsOneWidget);
     await tester.tap(find.text('FAKE'));
     await tester.pumpAndSettle();
-    expect(find.text('BEST: 90'), findsOneWidget);
+    expect(find.text('KỶ LỤC: 90'), findsOneWidget);
     expect(find.text('Test rules.'), findsOneWidget);
     expect(find.text('Grid: 4'), findsOneWidget);
     expect(find.text('Boost'), findsOneWidget);
@@ -226,6 +229,42 @@ void main() {
     expect(find.text('GAME OVER'), findsNothing);
     expect(find.text('SCORE 0000'), findsOneWidget);
     expect(find.text('BEST 0010'), findsOneWidget);
+  });
+
+  testWidgets('English: whole flow reads in English and Game texts follow', (
+    tester,
+  ) async {
+    await _pumpApp(tester, prefs: {'v1:settings:language': 'en'});
+    expect(find.text('Pick a cartridge'), findsOneWidget);
+    expect(find.text('New game'), findsOneWidget);
+    await _openGame(tester);
+    await _tapButton(tester, 'A');
+    await tester.tap(find.bySemanticsLabel('Pause'));
+    await tester.pump();
+    expect(find.text('PAUSED'), findsOneWidget);
+    expect(find.text('RESUME'), findsOneWidget);
+    expect(find.text('BACK TO MENU'), findsOneWidget);
+  });
+
+  testWidgets('language can be switched in Settings and is remembered', (
+    tester,
+  ) async {
+    await _pumpApp(tester);
+    await tester.tap(find.byIcon(Icons.settings));
+    await tester.pumpAndSettle();
+    expect(find.text('CÀI ĐẶT'), findsOneWidget);
+    await tester.tap(find.text('ENGLISH'));
+    await tester.pumpAndSettle();
+    expect(find.text('SETTINGS'), findsOneWidget);
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString('v1:settings:language'), 'en');
+    await tester.tap(find.text('AUTO'));
+    await tester.pumpAndSettle();
+    // The test device is English, so Auto resolves to English.
+    expect(find.text('SETTINGS'), findsOneWidget);
+    await tester.tap(find.text('TIẾNG VIỆT'));
+    await tester.pumpAndSettle();
+    expect(find.text('CÀI ĐẶT'), findsOneWidget);
   });
 
   testWidgets('settings toggles persist', (tester) async {

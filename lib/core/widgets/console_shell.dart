@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
+import '../l10n/strings.dart';
 import '../game_action.dart';
 import 'action_button.dart';
 import 'dpad.dart';
@@ -67,7 +68,7 @@ class ConsoleShell extends StatelessWidget {
                         children: [
                           Column(
                             children: [
-                              _topStrip(),
+                              _topStrip(context),
                               _bezel(),
                               const SizedBox(height: 16),
                             ],
@@ -90,14 +91,14 @@ class ConsoleShell extends StatelessWidget {
     );
   }
 
-  Widget _topStrip() {
+  Widget _topStrip(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 12, 18, 10),
       child: Row(
         children: [
           Semantics(
             button: true,
-            label: 'Tạm dừng',
+            label: context.s.pauseButton,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: onPause,

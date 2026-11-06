@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
 import '../game_action.dart';
+import '../l10n/strings.dart';
 
 /// Round crimson A/B button. Reports down/up for the pointer that pressed it
 /// and keeps that pointer until it is released, so sliding the finger onto a
@@ -48,7 +49,7 @@ class _ActionButtonState extends State<ActionButton> {
     final depth = _pressed ? 1.0 : 4.0;
     return Semantics(
       button: true,
-      label: 'Nút ${widget.label}',
+      label: context.s.buttonSemantics(widget.label),
       child: Listener(
         behavior: HitTestBehavior.opaque,
         onPointerDown: _down,

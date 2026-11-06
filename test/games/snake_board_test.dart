@@ -198,7 +198,7 @@ void main() {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'v1:settings:language': 'vi'});
     await tester.pumpWidget(
       NostalPlayApp(
         storage: await AppStorage.load(),

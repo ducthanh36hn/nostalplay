@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/l10n/strings.dart';
 import '../theme.dart';
 
 /// Top bar for stacked screens: 44px back button and a centred title.
@@ -16,7 +17,7 @@ class ScreenHeader extends StatelessWidget {
         children: [
           Semantics(
             button: true,
-            label: 'Quay lại',
+            label: context.s.back,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () => Navigator.of(context).maybePop(),

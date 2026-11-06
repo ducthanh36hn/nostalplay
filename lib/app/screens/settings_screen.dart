@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/ads/ads_controller.dart';
+import '../../core/l10n/strings.dart';
 import '../../core/settings_controller.dart';
 import '../theme.dart';
 import '../widgets/screen_header.dart';
@@ -20,32 +21,37 @@ class SettingsScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const ScreenHeader(title: 'Cài đặt'),
+            ScreenHeader(title: context.s.settings),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                 children: [
                   _SettingTile(
                     icon: Icons.volume_up,
-                    title: 'Âm thanh',
-                    subtitle: 'Bật/tắt hiệu ứng âm thanh',
+                    title: context.s.sound,
+                    subtitle: context.s.soundSub,
                     value: settings.soundEnabled,
                     onChanged: settings.setSound,
                   ),
                   const SizedBox(height: 16),
                   _SettingTile(
                     icon: Icons.vibration,
-                    title: 'Rung',
-                    subtitle: 'Rung nhẹ khi nhấn nút',
+                    title: context.s.vibration,
+                    subtitle: context.s.vibrationSub,
                     value: settings.hapticsEnabled,
                     onChanged: settings.setHaptics,
+                  ),
+                  const SizedBox(height: 16),
+                  _LanguageTile(
+                    value: settings.language,
+                    onChanged: settings.setLanguage,
                   ),
                   if (ads.privacyOptionsRequired) ...[
                     const SizedBox(height: 16),
                     _ActionTile(
                       icon: Icons.privacy_tip_outlined,
-                      title: 'Quyền riêng tư quảng cáo',
-                      subtitle: 'Xem hoặc đổi lựa chọn đồng ý',
+                      title: context.s.privacyTitle,
+                      subtitle: context.s.privacySub,
                       onTap: ads.showPrivacyOptions,
                     ),
                   ],
@@ -168,11 +174,11 @@ class _PixelSwitch extends StatelessWidget {
           child: Row(
             children: [
               if (on)
-                const Expanded(
+                Expanded(
                   child: Center(
                     child: Text(
-                      'BẬT',
-                      style: TextStyle(
+                      context.s.on,
+                      style: const TextStyle(
                         fontFamily: kMono,
                         fontWeight: FontWeight.w700,
                         fontSize: 11,
@@ -186,11 +192,11 @@ class _PixelSwitch extends StatelessWidget {
                 color: on ? NpColors.lcdBright : NpColors.lcdDark,
               ),
               if (!on)
-                const Expanded(
+                Expanded(
                   child: Center(
                     child: Text(
-                      'TẮT',
-                      style: TextStyle(
+                      context.s.off,
+                      style: const TextStyle(
                         fontFamily: kMono,
                         fontWeight: FontWeight.w700,
                         fontSize: 11,
@@ -282,6 +288,115 @@ class _ActionTile extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Language picker: follow the phone, Vietnamese or English.
+class _LanguageTile extends StatelessWidget {
+  const _LanguageTile({required this.value, required this.onChanged});
+
+  final LanguageSetting value;
+  final ValueChanged<LanguageSetting> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.s;
+    String label(LanguageSetting l) => switch (l) {
+      LanguageSetting.auto => s.languageAuto,
+      LanguageSetting.vi => 'TIẾNG VIỆT',
+      LanguageSetting.en => 'ENGLISH',
+    };
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: NpColors.card,
+        border: Border.all(color: NpColors.lcdDark, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                color: NpColors.surface,
+                child: const Icon(Icons.language, color: NpColors.primary),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      s.languageTitle,
+                      style: const TextStyle(
+                        fontFamily: kMono,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                        color: NpColors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      s.languageSub,
+                      style: const TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 13,
+                        color: NpColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              for (final l in LanguageSetting.values) ...[
+                if (l != LanguageSetting.auto) const SizedBox(width: 8),
+                Expanded(
+                  child: Semantics(
+                    button: true,
+                    selected: l == value,
+                    label: label(l),
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => onChanged(l),
+                      child: Container(
+                        height: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: l == value
+                              ? NpColors.primary
+                              : NpColors.surface,
+                          border: Border.all(color: NpColors.lcdDark, width: 2),
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            label(l),
+                            style: TextStyle(
+                              fontFamily: kMono,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 11,
+                              color: l == value
+                                  ? NpColors.onPrimary
+                                  : NpColors.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
       ),
     );
   }

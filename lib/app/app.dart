@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../core/ads/ads_controller.dart';
 import '../core/feedback/game_feedback.dart';
 import '../core/game_definition.dart';
+import '../core/l10n/strings.dart';
 import '../core/settings_controller.dart';
 import '../core/storage/app_storage.dart';
 import 'routes.dart';
@@ -48,6 +49,10 @@ class NostalPlayApp extends StatelessWidget {
       child: MaterialApp(
         title: 'NostalPlay',
         debugShowCheckedModeBanner: false,
+        builder: (context, child) {
+          final settings = context.watch<SettingsController>();
+          return StringsScope(strings: settings.strings, child: child!);
+        },
         theme: buildTheme(),
         initialRoute: Routes.home,
         onGenerateRoute: onGenerateRoute,

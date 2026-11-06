@@ -26,7 +26,7 @@
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~1458002511</string>
 	<key>NSUserTrackingUsageDescription</key>
-	<string>Dữ liệu này dùng để hiển thị quảng cáo phù hợp hơn với bạn. Bạn vẫn chơi bình thường nếu từ chối.</string>
+	<string>This is used to show ads that are more relevant to you. You can still play normally if you decline. / Dữ liệu này dùng để hiển thị quảng cáo phù hợp hơn với bạn. Bạn vẫn chơi bình thường nếu từ chối.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

@@ -29,11 +29,21 @@ final GameDefinition snakeGame = GameDefinition(
   id: 'snake',
   title: 'Snake',
   rules:
-      'Điều khiển rắn ăn mồi để dài ra. Đâm vào tường hoặc thân mình là '
-      'thua. Càng ăn nhiều, rắn càng nhanh.',
-  dpadHint: 'Đổi hướng',
-  aHint: 'Giữ để tăng tốc',
-  gridInfo: 'Lưới: 16 × 16',
+      'Steer the snake to eat and grow. Hit a wall or your own body and '
+      'you lose. The more you eat, the faster it gets.',
+  dpadHint: 'Change direction',
+  aHint: 'Hold to speed up',
+  gridInfo: 'Grid: 16 × 16',
+  translations: const {
+    'vi': GameTexts(
+      rules:
+          'Điều khiển rắn ăn mồi để dài ra. Đâm vào tường hoặc thân mình là '
+          'thua. Càng ăn nhiều, rắn càng nhanh.',
+      dpadHint: 'Đổi hướng',
+      aHint: 'Giữ để tăng tốc',
+      gridInfo: 'Lưới: 16 × 16',
+    ),
+  },
   icon: (_) => const PixelIcon(cells: _snakeCells, size: 48),
   builder: (context, session, input) => SnakeBoard(
     session: session,

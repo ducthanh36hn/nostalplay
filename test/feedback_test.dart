@@ -18,7 +18,10 @@ import 'support/fakes.dart';
 Future<(GameFeedback, SettingsController, FakeSfx, FakeHaptics)> _feedback([
   Map<String, Object> prefs = const {},
 ]) async {
-  SharedPreferences.setMockInitialValues(prefs);
+  SharedPreferences.setMockInitialValues({
+    'v1:settings:language': 'vi',
+    ...prefs,
+  });
   final settings = SettingsController(await AppStorage.load());
   final sfx = FakeSfx();
   final haptics = FakeHaptics();
@@ -37,7 +40,10 @@ Future<(FakeSfx, FakeHaptics)> _pumpApp(
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  SharedPreferences.setMockInitialValues(prefs);
+  SharedPreferences.setMockInitialValues({
+    'v1:settings:language': 'vi',
+    ...prefs,
+  });
   final sfx = FakeSfx();
   final haptics = FakeHaptics();
   await tester.pumpWidget(

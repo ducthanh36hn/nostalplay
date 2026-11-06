@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
 import '../game_action.dart';
+import '../l10n/strings.dart';
 
 /// Maps a touch position inside a square D-pad of [size] to a direction.
 /// Returns null in the centre dead zone or outside the pad. [slop] widens the
@@ -90,7 +91,7 @@ class _DPadState extends State<DPad> {
 
     return Semantics(
       container: true,
-      label: 'Phím điều hướng',
+      label: context.s.dpadSemantics,
       child: Listener(
         behavior: HitTestBehavior.opaque,
         onPointerDown: _event,
