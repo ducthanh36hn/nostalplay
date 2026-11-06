@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../core/game_definition.dart';
 import '../core/settings_controller.dart';
 import '../core/storage/app_storage.dart';
-import 'screens/demo_screen.dart';
+import 'routes.dart';
 import 'theme.dart';
 
 class NostalPlayApp extends StatelessWidget {
@@ -29,7 +29,8 @@ class NostalPlayApp extends StatelessWidget {
         title: 'NostalPlay',
         debugShowCheckedModeBanner: false,
         theme: buildTheme(),
-        home: const DemoScreen(),
+        initialRoute: Routes.home,
+        onGenerateRoute: onGenerateRoute,
       ),
     );
   }

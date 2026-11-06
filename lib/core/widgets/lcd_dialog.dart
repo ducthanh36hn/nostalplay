@@ -156,3 +156,32 @@ class LcdToggle extends StatelessWidget {
     );
   }
 }
+
+/// Small framed message on the LCD, e.g. "NHẤN A ĐỂ CHƠI".
+class LcdBadge extends StatelessWidget {
+  const LcdBadge({super.key, required this.text, this.inverted = false});
+
+  final String text;
+
+  /// Dark fill with bright text (used for "KỶ LỤC MỚI!").
+  final bool inverted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: inverted ? NpColors.lcdDeep : NpColors.lcdBright,
+        border: Border.all(color: NpColors.lcdDeep, width: 2),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: lcdStyle(
+          size: 13,
+          color: inverted ? NpColors.lcdBright : NpColors.lcdDeep,
+        ),
+      ),
+    );
+  }
+}

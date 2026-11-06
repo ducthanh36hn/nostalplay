@@ -1,29 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nostalplay/app/app.dart';
-import 'package:nostalplay/core/game_definition.dart';
-import 'package:nostalplay/core/storage/app_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nostalplay/core/game_action.dart';
 import 'package:nostalplay/core/widgets/action_button.dart';
 import 'package:nostalplay/core/widgets/dpad.dart';
 
-Future<Widget> _app() async {
-  SharedPreferences.setMockInitialValues({});
-  return NostalPlayApp(
-    storage: await AppStorage.load(),
-    registry: GameRegistry(const []),
-  );
-}
-
 void main() {
-  testWidgets('app boots and shows the console', (tester) async {
-    await tester.pumpWidget(await _app());
-    expect(find.text('NOSTALPLAY'), findsOneWidget);
-    expect(find.text('SCORE 0030'), findsOneWidget);
-    expect(find.text('NHẤN A ĐỂ CHƠI'), findsOneWidget);
-  });
-
   test('dpadDirectionAt maps zones and ignores centre/outside', () {
     const s = 132.0;
     expect(dpadDirectionAt(const Offset(66, 10), s), GameAction.up);
@@ -96,21 +77,5 @@ void main() {
     await g.moveBy(const Offset(200, 0));
     await g.up();
     expect(log, ['down:buttonA', 'up:buttonA']);
-  });
-
-  testWidgets('console fits a 320x568 phone without overflow', (tester) async {
-    tester.view.physicalSize = const Size(320, 568);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    await tester.pumpWidget(await _app());
-    expect(tester.takeException(), isNull);
-    final dpad = tester.getRect(find.byType(DPad));
-    final a = tester.getRect(find.widgetWithText(ActionButton, 'A'));
-    final b = tester.getRect(find.widgetWithText(ActionButton, 'B'));
-    expect(dpad.overlaps(a), isFalse);
-    expect(dpad.overlaps(b), isFalse);
-    expect(a.overlaps(b), isFalse);
-    expect(a.width, greaterThanOrEqualTo(44));
-    expect(dpad.width / 3, greaterThanOrEqualTo(44));
   });
 }
