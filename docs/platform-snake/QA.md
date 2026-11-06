@@ -14,7 +14,7 @@ Ký hiệu: ✅ đã kiểm chứng · 🧪 chỉ có test tự động · ❓ c
 - ✅ Vào nền → tự Pause, quay lại vẫn Pause (Android); 🧪 Pause/Resume/Restart/Quit.
 - 🧪 Kỷ lục lưu qua `AppStorage` (khởi tạo lại bộ nhớ); ❓ chưa thử tắt hẳn app rồi mở lại.
 - 🧪 Toggle âm thanh/rung có hiệu lực ngay và lưu; ❓ chưa nghe/cảm nhận trên máy thật.
-- ✅ Hiển thị ổn trên iPhone SE (bước 6) và Pixel 9; 🧪 test 320 px. Xem lỗi layout bên dưới.
+- ✅ Hiển thị ổn trên iPhone SE (bước 6) và Pixel 9; 🧪 test 320 px. Lỗi layout màn cao đã sửa (mục 2).
 - 🧪 Game giả trong registry (`fake_game`) chạy không sửa `core/`.
 - ❓ CI chưa chạy (chưa push). Cục bộ: `dart analyze` sạch, 75 test qua.
 
@@ -24,8 +24,8 @@ Ký hiệu: ✅ đã kiểm chứng · 🧪 chỉ có test tự động · ❓ c
 
 ## Phát hiện
 1. **Android build lỗi với JDK 25** (JBR của Android Studio): Gradle 8.12 không chạy. Cách chạy: `GRADLE_OPTS="-Dorg.gradle.java.home=$(/usr/libexec/java_home -v 21)" flutter build apk --debug`, hoặc `flutter config --jdk-dir <JDK 21>`. Nên nâng Gradle/AGP lên bản hỗ trợ JDK 25 hoặc ghi vào README.
-2. **Màn cao (20:9, Pixel 9)**: vỏ máy có khoảng trống ~20% chiều cao dưới bộ nút; nút nằm sát phía trên. Chưa vi phạm NFR-4 (không tràn/chồng) nhưng chưa đẹp; cân nhắc căn nút xuống giữa phần còn lại.
-3. **Splash Android 12+** nền trắng quanh icon tròn; nên đặt màu nền splash `#1E2420`.
+2. **Màn cao (20:9, Pixel 9)**: vỏ máy có khoảng trống ~20% dưới bộ nút. **Đã sửa**: chiều cao dư chia đều quanh bộ nút (`ConsoleShell`); có test `console_shell_layout_test` (412×915 và 320×568 / 375×667 / 390×844 không tràn). Chưa nhìn lại bằng mắt trên emulator vì emulator hết RAM.
+3. **Splash Android**: nền trắng. **Đã sửa**: nền `#1E2420` (đã thấy trên emulator, Android 12+ qua `values-v31`; Android cũ hơn chưa thử).
 4. Emulator 2 GB RAM bị hệ điều hành kill app một lần (lowmemorykiller), không phải lỗi app.
 5. Lỗi tap đầu tiên bị mất trên iOS simulator (từ bước 4) không tái hiện trên Android; vẫn cần máy thật.
 

@@ -57,11 +57,19 @@ class ConsoleShell extends StatelessWidget {
                     physics: const ClampingScrollPhysics(),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(minHeight: c.maxHeight),
+                      // On tall screens the spare height is split evenly above
+                      // and below the controls instead of leaving a void.
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _topStrip(),
-                          _bezel(),
-                          const SizedBox(height: 16),
+                          Column(
+                            children: [
+                              _topStrip(),
+                              _bezel(),
+                              const SizedBox(height: 16),
+                            ],
+                          ),
                           Opacity(
                             opacity: dimControls ? 0.6 : 1,
                             child: _controls(),
