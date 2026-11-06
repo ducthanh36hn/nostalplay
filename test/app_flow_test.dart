@@ -37,6 +37,15 @@ Future<void> _tapButton(WidgetTester tester, String label) async {
   await tester.pump();
 }
 
+/// Presses the D-pad below its centre (moves the menu cursor down).
+Future<void> _dpadDown(WidgetTester tester) async {
+  final g = await tester.startGesture(
+    tester.getCenter(find.byType(DPad)) + const Offset(0, 45),
+  );
+  await g.up();
+  await tester.pump();
+}
+
 Future<void> _openGame(WidgetTester tester) async {
   await tester.tap(find.text('FAKE'));
   await tester.pumpAndSettle();
@@ -60,7 +69,8 @@ void main() {
     expect(find.text('★ KỶ LỤC MỚI! ★'), findsOneWidget);
     expect(find.text('20'), findsNWidgets(2)); // score + best
 
-    await _tapButton(tester, 'B'); // back to menu (detail)
+    await _dpadDown(tester);
+    await _tapButton(tester, 'A'); // Về menu -> detail
     await tester.pumpAndSettle();
     expect(find.text('BEST: 20'), findsOneWidget);
     await tester.tap(find.byIcon(Icons.arrow_back));
@@ -99,7 +109,7 @@ void main() {
     expect(find.text('SCORE 0010'), findsOneWidget);
   });
 
-  testWidgets('pause button, A resumes, B leaves', (tester) async {
+  testWidgets('pause button, A resumes, menu item leaves', (tester) async {
     await _pumpApp(tester);
     await _openGame(tester);
     await _tapButton(tester, 'A');
@@ -114,6 +124,10 @@ void main() {
     await tester.tap(find.bySemanticsLabel('Tạm dừng'));
     await tester.pump();
     await _tapButton(tester, 'B');
+    expect(find.text('TẠM DỪNG'), findsOneWidget, reason: 'B does nothing');
+    await _dpadDown(tester);
+    await _dpadDown(tester);
+    await _tapButton(tester, 'A'); // Về menu
     await tester.pumpAndSettle();
     expect(
       find.text('PLAY'),
@@ -173,6 +187,29 @@ void main() {
 
     await _tapButton(tester, 'B'); // game over
     await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('PLAY'), findsOneWidget);
+  });
+
+  testWidgets('Game Over: B does nothing, D-pad picks, hint only on cursor', (
+    tester,
+  ) async {
+    await _pumpApp(tester);
+    await _openGame(tester);
+    await _tapButton(tester, 'A');
+    await _tapButton(tester, 'B'); // game over
+    expect(find.text('[A]'), findsOneWidget);
+    expect(find.text('[B]'), findsNothing);
+
+    await _tapButton(tester, 'B');
+    expect(
+      find.text('GAME OVER'),
+      findsOneWidget,
+      reason: 'B is not a shortcut',
+    );
+
+    await _dpadDown(tester);
+    await _tapButton(tester, 'A'); // Về menu
     await tester.pumpAndSettle();
     expect(find.text('PLAY'), findsOneWidget);
   });

@@ -33,6 +33,10 @@ class _GameScreenState extends State<GameScreen> {
   int _pauseIndex = 0;
   static const _pauseItems = 5;
 
+  /// D-pad cursor in the Game Over menu: play again, back to menu.
+  int _overIndex = 0;
+  static const _overItems = 2;
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +51,7 @@ class _GameScreenState extends State<GameScreen> {
     // Nothing may stay "held" across a pause, game over or restart.
     final changed = _session.state != _lastState;
     if (changed && _session.state == SessionState.paused) _pauseIndex = 0;
+    if (changed && _session.state == SessionState.gameOver) _overIndex = 0;
     if (changed && !_session.isPlaying) _input.releaseAll();
     if (changed && _session.state == SessionState.gameOver) {
       _feedback.gameOver(newRecord: _session.newRecord);
@@ -88,14 +93,20 @@ class _GameScreenState extends State<GameScreen> {
             setState(() => _pauseIndex = (_pauseIndex + 1) % _pauseItems);
           case GameAction.buttonA:
             _activatePauseItem(_pauseIndex);
-          case GameAction.buttonB:
-            _leave();
-          case GameAction.left || GameAction.right:
+          case GameAction.buttonB || GameAction.left || GameAction.right:
             break;
         }
       case SessionState.gameOver:
-        if (a == GameAction.buttonA) _playAgain();
-        if (a == GameAction.buttonB) _leave();
+        switch (a) {
+          case GameAction.up:
+            setState(() => _overIndex = (_overIndex - 1) % _overItems);
+          case GameAction.down:
+            setState(() => _overIndex = (_overIndex + 1) % _overItems);
+          case GameAction.buttonA:
+            _overIndex == 0 ? _playAgain() : _leave();
+          case GameAction.buttonB || GameAction.left || GameAction.right:
+            break;
+        }
       case SessionState.playing:
         break;
     }
@@ -222,7 +233,7 @@ class _GameScreenState extends State<GameScreen> {
           LcdButton(
             label: 'Về menu',
             primary: _pauseIndex == 2,
-            hint: 'B',
+            hint: _pauseIndex == 2 ? 'A' : null,
             onPressed: () => _activatePauseItem(2),
           ),
           const SizedBox(height: 4),
@@ -268,12 +279,17 @@ class _GameScreenState extends State<GameScreen> {
           const SizedBox(height: 10),
           LcdButton(
             label: 'Chơi lại',
-            primary: true,
-            hint: 'A',
+            primary: _overIndex == 0,
+            hint: _overIndex == 0 ? 'A' : null,
             onPressed: _playAgain,
           ),
           const SizedBox(height: 8),
-          LcdButton(label: 'Về menu', hint: 'B', onPressed: _leave),
+          LcdButton(
+            label: 'Về menu',
+            primary: _overIndex == 1,
+            hint: _overIndex == 1 ? 'A' : null,
+            onPressed: _leave,
+          ),
         ],
       ),
     );

@@ -45,8 +45,8 @@ Người dùng: người chơi phổ thông, thích cảm giác máy game điệ
 - **FR-4**: Input phát sự kiện `onActionDown/onActionUp` cho `GameAction {up, down, left, right, buttonA, buttonB}`. Hỗ trợ nhấn nhanh, giữ, và đa chạm (ví dụ giữ hướng + nhấn A) theo pointer-id; không nhận nhầm khi trượt ngón giữa các nút.
 - **FR-5**: Phản hồi nút: hiệu ứng nhấn trực quan; rung nhẹ nếu bật; không trễ cảm nhận được.
 - **FR-6**: `GameSession` quản lý trạng thái `ready → playing ↔ paused → gameOver`. Từ `gameOver` có thể chơi lại hoặc về menu.
-- **FR-7**: Pause: nút Pause và nút hệ thống Back mở lớp Pause với Resume / Restart / Quit to menu (và bật/tắt âm thanh, rung). D-pad lên/xuống di chuyển con trỏ, A chọn mục, B = Về menu. Khi app vào nền hoặc mất focus, tự chuyển `paused`; khi quay lại không tự chạy tiếp.
-- **FR-8**: Game Over: hiển thị điểm, kỷ lục, thông báo "Kỷ lục mới" nếu phá kỷ lục; nút Chơi lại và Về menu. Nút A trên máy = Chơi lại, nút B = Về menu (đã duyệt 2026-10-27).
+- **FR-7**: Pause: nút Pause và nút hệ thống Back mở lớp Pause với Resume / Restart / Quit to menu (và bật/tắt âm thanh, rung). D-pad lên/xuống di chuyển con trỏ, A chọn mục; B không dùng trong menu; chỉ mục đang chọn hiện gợi ý [A]. Khi app vào nền hoặc mất focus, tự chuyển `paused`; khi quay lại không tự chạy tiếp.
+- **FR-8**: Game Over: hiển thị điểm, kỷ lục, thông báo "Kỷ lục mới" nếu phá kỷ lục; nút Chơi lại và Về menu. D-pad lên/xuống chọn Chơi lại / Về menu, A xác nhận mục đang chọn (mặc định Chơi lại); B không dùng; chỉ mục đang chọn hiện gợi ý [A] (cập nhật theo yêu cầu 2026-11-06, thay quyết định cũ A = Chơi lại, B = Về menu).
 - **FR-9**: Lưu kỷ lục theo game ngay khi kết thúc ván (và khi thoát khi đang chơi nếu điểm hiện tại cao hơn kỷ lục). Dữ liệu còn sau khi tắt app.
 - **FR-10**: Settings: bật/tắt âm thanh, bật/tắt rung; lưu cục bộ, áp dụng ngay.
 - **FR-11**: Registry game: mỗi game là một `GameDefinition` (id, tên, mô tả, hướng dẫn điều khiển, builder). Thêm game = thêm thư mục + một dòng vào danh sách.
