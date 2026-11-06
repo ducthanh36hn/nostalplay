@@ -129,12 +129,17 @@ class _GameScreenState extends State<GameScreen> {
 
   static String _pad(int n) => n.toString().padLeft(4, '0');
 
-  Widget _overlay(Widget child, {bool dim = false}) {
+  Widget _overlay(
+    Widget child, {
+    bool dim = false,
+    Alignment alignment = Alignment.center,
+  }) {
     return ColoredBox(
       color: dim ? NpColors.lcdDark.withValues(alpha: 0.7) : Colors.transparent,
       child: Padding(
         padding: const EdgeInsets.all(12),
-        child: Center(
+        child: Align(
+          alignment: alignment,
           child: FittedBox(
             fit: BoxFit.scaleDown,
             child: SizedBox(width: 256, child: child),
@@ -148,7 +153,11 @@ class _GameScreenState extends State<GameScreen> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: _session.start,
-      child: _overlay(const LcdBadge(text: 'NHẤN A ĐỂ CHƠI')),
+      // Above the middle row so the snake and apple stay visible.
+      child: _overlay(
+        const LcdBadge(text: 'NHẤN A ĐỂ CHƠI'),
+        alignment: const Alignment(0, -0.6),
+      ),
     );
   }
 

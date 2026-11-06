@@ -1,12 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
-import '../../core/game_action.dart';
 import '../../core/game_definition.dart';
-import '../../core/game_input.dart';
-import '../../core/game_session.dart';
 import '../../core/widgets/pixel_icon.dart';
+import 'snake_board.dart';
 
 const _snakeCells = <Rect>[
   Rect.fromLTWH(3, 3, 2, 2),
@@ -25,8 +21,7 @@ const _snakeCells = <Rect>[
   Rect.fromLTWH(13, 4, 2, 2),
 ];
 
-/// Snake. The board is a TEMPORARY placeholder until step 5: A scores 10,
-/// B ends the run, so the platform flow can be exercised end to end.
+/// Snake: D-pad steers, hold A to run at double speed.
 final GameDefinition snakeGame = GameDefinition(
   id: 'snake',
   title: 'Snake',
@@ -38,38 +33,5 @@ final GameDefinition snakeGame = GameDefinition(
   gridInfo: 'Lưới: 16 × 16',
   icon: (_) => const PixelIcon(cells: _snakeCells, size: 48),
   builder: (context, session, input) =>
-      _PlaceholderBoard(session: session, input: input),
+      SnakeBoard(session: session, input: input),
 );
-
-class _PlaceholderBoard extends StatefulWidget {
-  const _PlaceholderBoard({required this.session, required this.input});
-
-  final GameSession session;
-  final GameInput input;
-
-  @override
-  State<_PlaceholderBoard> createState() => _PlaceholderBoardState();
-}
-
-class _PlaceholderBoardState extends State<_PlaceholderBoard> {
-  late final StreamSubscription<GameAction> _sub;
-
-  @override
-  void initState() {
-    super.initState();
-    _sub = widget.input.downs.listen((a) {
-      if (!widget.session.isPlaying) return;
-      if (a == GameAction.buttonA) widget.session.addScore(10);
-      if (a == GameAction.buttonB) widget.session.gameOver();
-    });
-  }
-
-  @override
-  void dispose() {
-    _sub.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => const SizedBox.expand();
-}
