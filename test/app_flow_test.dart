@@ -1,58 +1,14 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nostalplay/app/app.dart';
-import 'package:nostalplay/core/game_action.dart';
 import 'package:nostalplay/core/game_definition.dart';
 import 'package:nostalplay/core/storage/app_storage.dart';
 import 'package:nostalplay/core/widgets/action_button.dart';
 import 'package:nostalplay/core/widgets/dpad.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Test game: A scores 10, B ends the run.
-GameDefinition _fakeGame() => GameDefinition(
-  id: 'fake',
-  title: 'Fake',
-  rules: 'Test rules.',
-  dpadHint: 'Move',
-  aHint: 'Boost',
-  gridInfo: 'Grid: 4',
-  builder: (context, session, input) => _Board(session: session, input: input),
-);
-
-class _Board extends StatefulWidget {
-  const _Board({required this.session, required this.input});
-
-  final dynamic session;
-  final dynamic input;
-
-  @override
-  State<_Board> createState() => _BoardState();
-}
-
-class _BoardState extends State<_Board> {
-  late final StreamSubscription<GameAction> _sub;
-
-  @override
-  void initState() {
-    super.initState();
-    _sub = (widget.input.downs as Stream<GameAction>).listen((a) {
-      if (!widget.session.isPlaying) return;
-      if (a == GameAction.buttonA) widget.session.addScore(10);
-      if (a == GameAction.buttonB) widget.session.gameOver();
-    });
-  }
-
-  @override
-  void dispose() {
-    _sub.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => const SizedBox.expand();
-}
+import 'support/fake_game.dart';
+import 'support/fakes.dart';
 
 Future<void> _pumpApp(
   WidgetTester tester, {
@@ -66,7 +22,9 @@ Future<void> _pumpApp(
   await tester.pumpWidget(
     NostalPlayApp(
       storage: await AppStorage.load(),
-      registry: GameRegistry([_fakeGame()]),
+      registry: GameRegistry([fakeGame()]),
+      sfx: FakeSfx(),
+      haptics: FakeHaptics(),
     ),
   );
 }

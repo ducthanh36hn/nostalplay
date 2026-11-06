@@ -12,6 +12,8 @@ import 'package:nostalplay/games/snake/snake_game.dart';
 import 'package:nostalplay/games/snake/snake_logic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../support/fakes.dart';
+
 class _Harness {
   _Harness(this.session, this.input, this.logic);
 
@@ -184,6 +186,8 @@ void main() {
       NostalPlayApp(
         storage: await AppStorage.load(),
         registry: GameRegistry([snakeGame]),
+        sfx: FakeSfx(),
+        haptics: FakeHaptics(),
       ),
     );
     await tester.tap(find.text('SNAKE'));

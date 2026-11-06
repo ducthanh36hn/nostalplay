@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/feedback/game_feedback.dart';
 import '../../core/game_action.dart';
 import '../../core/game_definition.dart';
 import '../../core/game_input.dart';
@@ -26,10 +27,12 @@ class _GameScreenState extends State<GameScreen> {
   late final GameSession _session;
   final GameInput _input = GameInput();
   SessionState? _lastState;
+  late final GameFeedback _feedback;
 
   @override
   void initState() {
     super.initState();
+    _feedback = context.read<GameFeedback>();
     _session =
         GameSession(gameId: widget.game.id, storage: context.read<AppStorage>())
           ..attachLifecycle()
@@ -38,8 +41,10 @@ class _GameScreenState extends State<GameScreen> {
 
   void _onSessionChanged() {
     // Nothing may stay "held" across a pause, game over or restart.
-    if (_session.state != _lastState && !_session.isPlaying) {
-      _input.releaseAll();
+    final changed = _session.state != _lastState;
+    if (changed && !_session.isPlaying) _input.releaseAll();
+    if (changed && _session.state == SessionState.gameOver) {
+      _feedback.gameOver(newRecord: _session.newRecord);
     }
     _lastState = _session.state;
   }
@@ -65,6 +70,7 @@ class _GameScreenState extends State<GameScreen> {
     // press arrived in: a press that ends the run must not also act on the
     // Game Over menu.
     final state = _session.state;
+    _feedback.buttonPressed();
     _input.down(a);
     switch (state) {
       case SessionState.ready:
@@ -232,9 +238,16 @@ class _GameScreenState extends State<GameScreen> {
 
   Widget _stat(String label, int value) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('${label.toUpperCase()}:', style: lcdStyle(size: 12)),
+        Expanded(
+          child: Text(
+            '${label.toUpperCase()}:',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: lcdStyle(size: 12),
+          ),
+        ),
+        const SizedBox(width: 8),
         Text('$value', style: lcdStyle(size: 14)),
       ],
     );

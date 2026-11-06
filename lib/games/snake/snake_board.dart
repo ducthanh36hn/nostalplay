@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
+import '../../core/feedback/game_feedback.dart';
 import '../../core/game_action.dart';
 import '../../core/game_input.dart';
 import '../../core/game_session.dart';
@@ -18,6 +19,7 @@ class SnakeBoard extends StatefulWidget {
     required this.session,
     required this.input,
     this.logic,
+    this.feedback,
   });
 
   final GameSession session;
@@ -25,6 +27,9 @@ class SnakeBoard extends StatefulWidget {
 
   /// Injected rules object for tests; a fresh game is created when null.
   final SnakeLogic? logic;
+
+  /// Sound and vibration; null (tests) means silent.
+  final GameFeedback? feedback;
 
   @override
   State<SnakeBoard> createState() => _SnakeBoardState();
@@ -111,10 +116,12 @@ class _SnakeBoardState extends State<SnakeBoard>
       case StepOutcome.moved:
         break;
       case StepOutcome.ate:
+        widget.feedback?.ate();
         widget.session.addScore(SnakeLogic.pointsPerFood);
       case StepOutcome.died:
         widget.session.gameOver();
       case StepOutcome.won:
+        widget.feedback?.ate();
         widget.session.addScore(SnakeLogic.pointsPerFood);
         widget.session.gameOver(won: true);
     }

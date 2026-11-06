@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
+import '../../core/feedback/game_feedback.dart';
 import '../../core/game_definition.dart';
 import '../../core/widgets/pixel_icon.dart';
 import 'snake_board.dart';
@@ -32,6 +35,9 @@ final GameDefinition snakeGame = GameDefinition(
   aHint: 'Giữ để tăng tốc',
   gridInfo: 'Lưới: 16 × 16',
   icon: (_) => const PixelIcon(cells: _snakeCells, size: 48),
-  builder: (context, session, input) =>
-      SnakeBoard(session: session, input: input),
+  builder: (context, session, input) => SnakeBoard(
+    session: session,
+    input: input,
+    feedback: context.read<GameFeedback>(),
+  ),
 );

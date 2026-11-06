@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'app/app.dart';
+import 'core/feedback/platform_feedback.dart';
 import 'core/storage/app_storage.dart';
 import 'games/games.dart';
 
@@ -11,5 +12,12 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
   ]);
   final storage = await AppStorage.load();
-  runApp(NostalPlayApp(storage: storage, registry: buildGameRegistry()));
+  runApp(
+    NostalPlayApp(
+      storage: storage,
+      registry: buildGameRegistry(),
+      sfx: AudioSfxPlayer(),
+      haptics: const SystemHaptics(),
+    ),
+  );
 }
