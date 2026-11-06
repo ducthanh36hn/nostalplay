@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
@@ -72,7 +74,7 @@ class ConsoleShell extends StatelessWidget {
                           ),
                           Opacity(
                             opacity: dimControls ? 0.6 : 1,
-                            child: _controls(),
+                            child: _controls(c),
                           ),
                           const SizedBox(height: 20),
                         ],
@@ -185,7 +187,20 @@ class ConsoleShell extends StatelessWidget {
     );
   }
 
-  Widget _controls() {
+  /// Largest D-pad that fits beside A/B (width) and under the LCD (height),
+  /// between 132 and 176 px; on very small screens the shell scrolls instead.
+  double _dpadSize(BoxConstraints c) {
+    const margin = 10.0; // DPad touch margin, counted in its layout size
+    const abWidth = 136.0;
+    final widthCap = c.maxWidth - abWidth - 8 - 2 * margin;
+    // Everything above the controls: top strip, bezel (status row + square
+    // LCD) and the gaps around the controls.
+    final above = 112 + (c.maxWidth - 40) + 16 + 20;
+    final heightCap = c.maxHeight - above - 2 * margin;
+    return math.max(132, math.min(176, math.min(widthCap, heightCap)));
+  }
+
+  Widget _controls(BoxConstraints c) {
     return Padding(
       // The D-pad carries its own 10 px touch margin, so this puts the drawn
       // pad about 14 px from the left edge.
@@ -194,7 +209,11 @@ class ConsoleShell extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          DPad(onActionDown: onActionDown, onActionUp: onActionUp),
+          DPad(
+            size: _dpadSize(c),
+            onActionDown: onActionDown,
+            onActionUp: onActionUp,
+          ),
           SizedBox(
             width: 136,
             height: 120,

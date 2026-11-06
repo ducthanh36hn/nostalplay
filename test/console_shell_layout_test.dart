@@ -37,4 +37,19 @@ void main() {
       expect(find.byType(DPad), findsOneWidget);
     });
   }
+
+  for (final (size, minPad) in const [
+    (Size(375, 667), 132.0),
+    (Size(390, 844), 160.0),
+    (Size(412, 915), 160.0),
+  ]) {
+    testWidgets('D-pad is large and nothing scrolls at $size', (tester) async {
+      await pumpShell(tester, size);
+      final pad = tester.getSize(find.byType(DPad));
+      // Layout size includes a 10 px touch margin on each side.
+      expect(pad.width - 20, greaterThanOrEqualTo(minPad));
+      final scroll = tester.state<ScrollableState>(find.byType(Scrollable));
+      expect(scroll.position.maxScrollExtent, 0);
+    });
+  }
 }

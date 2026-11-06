@@ -55,7 +55,10 @@ class _SnakeBoardState extends State<SnakeBoard>
   late final StreamSubscription<GameAction> _downs;
   Duration _last = Duration.zero;
   bool _skipNextDelta = true;
-  double _accumulatedMs = 0;
+
+  /// Progress through the current move, 0..1. Kept as a fraction (not ms) so
+  /// changing speed, e.g. tapping A, never makes the animation jump.
+  double _phase = 0;
 
   @override
   void initState() {
@@ -95,9 +98,8 @@ class _SnakeBoardState extends State<SnakeBoard>
     if (d == null || !_logic.turn(d)) return;
     // Only when this is the sole waiting turn, so queued inputs keep their order.
     if (_logic.pendingTurns != 1) return;
-    final interval = _currentInterval();
-    if (_accumulatedMs >= interval * _earlyTurnProgress) {
-      _accumulatedMs = 0;
+    if (_phase >= _earlyTurnProgress) {
+      _phase = 0;
       _advance();
       _repaint.value++;
     }
@@ -113,22 +115,21 @@ class _SnakeBoardState extends State<SnakeBoard>
     _skipNextDelta = false;
     _last = elapsed;
     if (!widget.session.isPlaying) {
-      _accumulatedMs = 0;
+      _phase = 0;
       return;
     }
     _frame.timeMs += dtMs;
     _frame.foodAgeMs += dtMs;
-    _accumulatedMs += math.min(dtMs, _logic.tickMs.toDouble());
+    _phase += math.min(dtMs, _logic.tickMs.toDouble()) / _currentInterval();
 
     var steps = 0;
     while (steps < _maxStepsPerFrame && widget.session.isPlaying) {
-      final interval = _currentInterval();
-      if (_accumulatedMs < interval) break;
-      _accumulatedMs -= interval;
+      if (_phase < 1) break;
+      _phase -= 1;
       steps++;
       _advance();
     }
-    _frame.progress = (_accumulatedMs / _currentInterval()).clamp(0.0, 1.0);
+    _frame.progress = _phase.clamp(0.0, 1.0);
     _repaint.value++;
   }
 

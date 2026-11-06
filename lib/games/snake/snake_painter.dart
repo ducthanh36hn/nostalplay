@@ -91,6 +91,46 @@ class SnakePainter extends CustomPainter {
         Rect.fromLTWH(x + k, y + k, cell - 2 * k, cell - 2 * k),
         ink,
       );
+      if (i == 0) _paintHeadDetails(canvas, Offset(x, y), cell, ink);
+    }
+  }
+
+  /// Eyes on the front of the head, and a tongue that flicks out now and then.
+  /// Both follow the direction the snake is really moving in.
+  void _paintHeadDetails(Canvas canvas, Offset origin, double cell, Paint ink) {
+    final f = Offset(
+      logic.direction.dx.toDouble(),
+      logic.direction.dy.toDouble(),
+    );
+    final side = Offset(-f.dy, f.dx);
+    final centre = origin + Offset(cell / 2, cell / 2);
+
+    // Eyes: two bright pixels, a little ahead of the middle.
+    final e = math.max(2.0, cell * 0.17);
+    final eye = Paint()
+      ..color = NpColors.lcdBright
+      ..isAntiAlias = false;
+    for (final sign in const [-1.0, 1.0]) {
+      final c = centre + f * (cell * 0.18) + side * (sign * cell * 0.22);
+      canvas.drawRect(Rect.fromCenter(center: c, width: e, height: e), eye);
+    }
+
+    // Tongue: out for ~0.35 s of every 1.4 s.
+    if (frame.timeMs % 1400 > 350) return;
+    final w = math.max(2.0, cell * 0.1);
+    final front = centre + f * (cell / 2);
+    final stem = front + f * (cell * 0.32);
+    canvas.drawRect(
+      Rect.fromPoints(front - side * (w / 2), stem + side * (w / 2)),
+      ink,
+    );
+    for (final sign in const [-1.0, 1.0]) {
+      final a = stem + side * (sign * w * 1.0);
+      final b = a + f * (cell * 0.18);
+      canvas.drawRect(
+        Rect.fromPoints(a - side * (w / 2), b + side * (w / 2)),
+        ink,
+      );
     }
   }
 
