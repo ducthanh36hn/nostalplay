@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../app/theme.dart';
 import '../../core/game_action.dart';
+import '../../core/settings_controller.dart';
 import '../../core/widgets/console_shell.dart';
 import '../../core/widgets/lcd_dialog.dart';
 
@@ -16,8 +18,6 @@ class DemoScreen extends StatefulWidget {
 
 class _DemoScreenState extends State<DemoScreen> {
   bool _paused = false;
-  bool _sound = true;
-  bool _haptics = false;
   final Set<GameAction> _held = {};
 
   @override
@@ -58,6 +58,7 @@ class _DemoScreenState extends State<DemoScreen> {
   }
 
   Widget _pause() {
+    final settings = context.watch<SettingsController>();
     return ColoredBox(
       color: NpColors.lcdDark.withValues(alpha: 0.7),
       child: Padding(
@@ -83,14 +84,14 @@ class _DemoScreenState extends State<DemoScreen> {
                   LcdToggle(
                     icon: Icons.volume_up,
                     label: 'Âm thanh',
-                    value: _sound,
-                    onChanged: (v) => setState(() => _sound = v),
+                    value: settings.soundEnabled,
+                    onChanged: settings.setSound,
                   ),
                   LcdToggle(
                     icon: Icons.vibration,
                     label: 'Rung',
-                    value: _haptics,
-                    onChanged: (v) => setState(() => _haptics = v),
+                    value: settings.hapticsEnabled,
+                    onChanged: settings.setHaptics,
                   ),
                 ],
               ),

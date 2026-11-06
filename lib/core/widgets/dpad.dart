@@ -18,12 +18,7 @@ GameAction? dpadDirectionAt(Offset p, double size) {
 /// Cross-shaped D-pad. Each finger holds at most one direction and can slide
 /// between directions; multiple fingers are tracked by pointer id.
 class DPad extends StatefulWidget {
-  const DPad({
-    super.key,
-    this.onActionDown,
-    this.onActionUp,
-    this.size = 132,
-  });
+  const DPad({super.key, this.onActionDown, this.onActionUp, this.size = 132});
 
   final GameActionCallback? onActionDown;
   final GameActionCallback? onActionUp;
@@ -88,14 +83,26 @@ class _DPadState extends State<DPad> {
           height: s,
           child: Stack(
             children: [
-              petal(GameAction.up, Rect.fromLTWH(arm, 0, arm, arm),
-                  Icons.arrow_drop_up),
-              petal(GameAction.down, Rect.fromLTWH(arm, 2 * arm, arm, arm),
-                  Icons.arrow_drop_down),
-              petal(GameAction.left, Rect.fromLTWH(0, arm, arm, arm),
-                  Icons.arrow_left),
-              petal(GameAction.right, Rect.fromLTWH(2 * arm, arm, arm, arm),
-                  Icons.arrow_right),
+              petal(
+                GameAction.up,
+                Rect.fromLTWH(arm, 0, arm, arm),
+                Icons.arrow_drop_up,
+              ),
+              petal(
+                GameAction.down,
+                Rect.fromLTWH(arm, 2 * arm, arm, arm),
+                Icons.arrow_drop_down,
+              ),
+              petal(
+                GameAction.left,
+                Rect.fromLTWH(0, arm, arm, arm),
+                Icons.arrow_left,
+              ),
+              petal(
+                GameAction.right,
+                Rect.fromLTWH(2 * arm, arm, arm, arm),
+                Icons.arrow_right,
+              ),
               Positioned.fromRect(
                 rect: Rect.fromLTWH(arm, arm, arm, arm),
                 child: const ColoredBox(color: NpColors.controlCharcoal),
