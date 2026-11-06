@@ -10,6 +10,6 @@ tones, no third-party samples). Free to use with this project.
 
 ## Artwork
 Pixel icons are drawn in code (`lib/games/snake/snake_game.dart`).
-The app icon (neon-green outline handheld on black) is drawn by
+The app icon (bold lime-green outline handheld on the app's dark ground) is drawn by
 `tools/gen_icon.py` after a reference image supplied by the project owner.
 No third-party assets are used.
