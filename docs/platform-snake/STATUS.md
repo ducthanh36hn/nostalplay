@@ -1,8 +1,6 @@
 # STATUS — Nền tảng + Snake
 
-- Phase hiện tại: **Phase 4 — Design approved (2026-10-27), đang lập kế hoạch triển khai, chưa code**
-- Cập nhật: 2026-10-27
-- Spec approved (2026-10-26). Quyết định: A = tăng tốc; Home chỉ hiện game đã có; LCD xanh lá kiểu Game Boy; Game Over: A = Chơi lại, B = Về menu.
-- Stitch project `14001543918404638904`: đã có đủ 6 màn hình + icon (Home, Game Detail, Game Screen, Pause, Game Over biến thể A, Settings). ID bản dùng và ảnh: `design/STITCH.md`.
-- Còn mở: Game Screen thiếu rắn/táo; lỗi dấu tiếng Việt ở font pixel (dùng Space Mono khi code); Game Over biến thể B/C chưa có ảnh riêng; icon cần bản vuông.
-- Chưa code.
+- Phase hiện tại: **Phase 4 — Code xong bước 1–8; QA có báo cáo `QA.md`; chưa push**
+- Cập nhật: 2026-11-06
+- Đã có: nền tảng, 4 màn hình, Snake, âm thanh + rung, icon app, `.vscode/launch.json`. 75 test, `dart analyze` sạch. Chạy được trên iOS simulator và Android emulator.
+- Còn mở (xem `QA.md`): thử trên máy thật, chơi 10 phút, layout màn cao, splash Android, JDK 25 với Gradle, CI chưa chạy, Game Over biến thể B/C.
