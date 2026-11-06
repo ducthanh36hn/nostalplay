@@ -45,7 +45,13 @@ class _SnakeBoardState extends State<SnakeBoard>
 
   late final SnakeLogic _logic = widget.logic ?? SnakeLogic();
   late final Ticker _ticker;
+
+  /// A turn pressed at least this far into a move is applied at once instead
+  /// of waiting out the rest of the tick, so steering feels immediate.
+  static const _earlyTurnProgress = 0.5;
+
   final ValueNotifier<int> _repaint = ValueNotifier(0);
+  final SnakeFrame _frame = SnakeFrame();
   late final StreamSubscription<GameAction> _downs;
   Duration _last = Duration.zero;
   bool _skipNextDelta = true;
@@ -86,7 +92,20 @@ class _SnakeBoardState extends State<SnakeBoard>
       GameAction.right => Direction.right,
       _ => null,
     };
-    if (d != null) _logic.turn(d);
+    if (d == null || !_logic.turn(d)) return;
+    // Only when this is the sole waiting turn, so queued inputs keep their order.
+    if (_logic.pendingTurns != 1) return;
+    final interval = _currentInterval();
+    if (_accumulatedMs >= interval * _earlyTurnProgress) {
+      _accumulatedMs = 0;
+      _advance();
+      _repaint.value++;
+    }
+  }
+
+  double _currentInterval() {
+    final boost = widget.input.isHeld(GameAction.buttonA) ? _boostFactor : 1;
+    return _logic.tickMs / boost;
   }
 
   void _onTick(Duration elapsed) {
@@ -97,25 +116,30 @@ class _SnakeBoardState extends State<SnakeBoard>
       _accumulatedMs = 0;
       return;
     }
+    _frame.timeMs += dtMs;
+    _frame.foodAgeMs += dtMs;
     _accumulatedMs += math.min(dtMs, _logic.tickMs.toDouble());
 
     var steps = 0;
     while (steps < _maxStepsPerFrame && widget.session.isPlaying) {
-      final boost = widget.input.isHeld(GameAction.buttonA) ? _boostFactor : 1;
-      final interval = _logic.tickMs / boost;
+      final interval = _currentInterval();
       if (_accumulatedMs < interval) break;
       _accumulatedMs -= interval;
       steps++;
       _advance();
     }
-    if (steps > 0) _repaint.value++;
+    _frame.progress = (_accumulatedMs / _currentInterval()).clamp(0.0, 1.0);
+    _repaint.value++;
   }
 
   void _advance() {
+    _frame.previousBody = List.of(_logic.body);
+    _frame.progress = 0;
     switch (_logic.step()) {
       case StepOutcome.moved:
         break;
       case StepOutcome.ate:
+        _frame.foodAgeMs = 0;
         widget.feedback?.ate();
         widget.session.addScore(SnakeLogic.pointsPerFood);
       case StepOutcome.died:
@@ -131,7 +155,7 @@ class _SnakeBoardState extends State<SnakeBoard>
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: CustomPaint(
-        painter: SnakePainter(_logic, repaint: _repaint),
+        painter: SnakePainter(_logic, repaint: _repaint, frame: _frame),
         size: Size.infinite,
       ),
     );

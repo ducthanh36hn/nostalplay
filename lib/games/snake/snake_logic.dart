@@ -93,6 +93,9 @@ class SnakeLogic {
 
   Cell get head => body.first;
 
+  /// Turns accepted but not yet applied by a move.
+  int get pendingTurns => _queue.length;
+
   /// Milliseconds between moves, before any speed boost.
   int get tickMs =>
       max(minTickMs, startTickMs - tickStepMs * (eaten ~/ foodsPerSpeedUp));

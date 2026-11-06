@@ -14,6 +14,9 @@ void main() {
     expect(dpadDirectionAt(const Offset(66, 66), s), isNull);
     expect(dpadDirectionAt(const Offset(-1, 66), s), isNull);
     expect(dpadDirectionAt(const Offset(66, 140), s), isNull);
+    // With slop a touch just outside the pad still steers.
+    expect(dpadDirectionAt(const Offset(-8, 66), s, slop: 10), GameAction.left);
+    expect(dpadDirectionAt(const Offset(66, 150), s, slop: 10), isNull);
   });
 
   testWidgets('DPad reports down, slide, up per pointer', (tester) async {

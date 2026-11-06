@@ -98,6 +98,23 @@ void main() {
     expect(h.logic.head, const Cell(8, 7));
   });
 
+  testWidgets('a turn late in a move applies at once, an early one waits', (
+    tester,
+  ) async {
+    final h = await _pumpBoard(tester);
+    // 16 ms in: too early, the turn waits for the tick.
+    h.input.down(GameAction.up);
+    expect(h.logic.head, const Cell(8, 8));
+    await tester.pump(const Duration(milliseconds: 190));
+    expect(h.logic.head, const Cell(8, 7));
+
+    // Now ~110 ms into the next move (past half): the turn is applied right away.
+    await tester.pump(const Duration(milliseconds: 110));
+    h.input.down(GameAction.right);
+    expect(h.logic.head, const Cell(9, 7));
+    expect(h.logic.direction, Direction.right);
+  });
+
   testWidgets('presses before the run starts are ignored', (tester) async {
     final h = await _pumpBoard(tester, start: false);
     h.input.down(GameAction.up);

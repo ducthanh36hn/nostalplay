@@ -29,6 +29,10 @@ class _GameScreenState extends State<GameScreen> {
   SessionState? _lastState;
   late final GameFeedback _feedback;
 
+  /// D-pad cursor in the Pause menu: resume, restart, menu, sound, vibration.
+  int _pauseIndex = 0;
+  static const _pauseItems = 5;
+
   @override
   void initState() {
     super.initState();
@@ -42,6 +46,7 @@ class _GameScreenState extends State<GameScreen> {
   void _onSessionChanged() {
     // Nothing may stay "held" across a pause, game over or restart.
     final changed = _session.state != _lastState;
+    if (changed && _session.state == SessionState.paused) _pauseIndex = 0;
     if (changed && !_session.isPlaying) _input.releaseAll();
     if (changed && _session.state == SessionState.gameOver) {
       _feedback.gameOver(newRecord: _session.newRecord);
@@ -76,13 +81,39 @@ class _GameScreenState extends State<GameScreen> {
       case SessionState.ready:
         if (a == GameAction.buttonA) _session.start();
       case SessionState.paused:
-        if (a == GameAction.buttonA) _session.resume();
-        if (a == GameAction.buttonB) _leave();
+        switch (a) {
+          case GameAction.up:
+            setState(() => _pauseIndex = (_pauseIndex - 1) % _pauseItems);
+          case GameAction.down:
+            setState(() => _pauseIndex = (_pauseIndex + 1) % _pauseItems);
+          case GameAction.buttonA:
+            _activatePauseItem(_pauseIndex);
+          case GameAction.buttonB:
+            _leave();
+          case GameAction.left || GameAction.right:
+            break;
+        }
       case SessionState.gameOver:
         if (a == GameAction.buttonA) _playAgain();
         if (a == GameAction.buttonB) _leave();
       case SessionState.playing:
         break;
+    }
+  }
+
+  void _activatePauseItem(int i) {
+    final settings = context.read<SettingsController>();
+    switch (i) {
+      case 0:
+        _session.resume();
+      case 1:
+        _playAgain();
+      case 2:
+        _leave();
+      case 3:
+        settings.setSound(!settings.soundEnabled);
+      case 4:
+        settings.setHaptics(!settings.hapticsEnabled);
     }
   }
 
@@ -176,14 +207,24 @@ class _GameScreenState extends State<GameScreen> {
         children: [
           LcdButton(
             label: 'Tiếp tục',
-            primary: true,
-            hint: 'A',
-            onPressed: _session.resume,
+            primary: _pauseIndex == 0,
+            hint: _pauseIndex == 0 ? 'A' : null,
+            onPressed: () => _activatePauseItem(0),
           ),
           const SizedBox(height: 8),
-          LcdButton(label: 'Chơi lại', onPressed: _playAgain),
+          LcdButton(
+            label: 'Chơi lại',
+            primary: _pauseIndex == 1,
+            hint: _pauseIndex == 1 ? 'A' : null,
+            onPressed: () => _activatePauseItem(1),
+          ),
           const SizedBox(height: 8),
-          LcdButton(label: 'Về menu', hint: 'B', onPressed: _leave),
+          LcdButton(
+            label: 'Về menu',
+            primary: _pauseIndex == 2,
+            hint: 'B',
+            onPressed: () => _activatePauseItem(2),
+          ),
           const SizedBox(height: 4),
           Wrap(
             alignment: WrapAlignment.spaceBetween,
@@ -193,12 +234,14 @@ class _GameScreenState extends State<GameScreen> {
                 icon: Icons.volume_up,
                 label: 'Âm thanh',
                 value: settings.soundEnabled,
+                selected: _pauseIndex == 3,
                 onChanged: settings.setSound,
               ),
               LcdToggle(
                 icon: Icons.vibration,
                 label: 'Rung',
                 value: settings.hapticsEnabled,
+                selected: _pauseIndex == 4,
                 onChanged: settings.setHaptics,
               ),
             ],

@@ -116,7 +116,11 @@ class LcdToggle extends StatelessWidget {
     required this.label,
     required this.value,
     required this.onChanged,
+    this.selected = false,
   });
+
+  /// Highlighted by the D-pad cursor.
+  final bool selected;
 
   final IconData icon;
   final String label;
@@ -131,8 +135,15 @@ class LcdToggle extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => onChanged(!value),
-        child: ConstrainedBox(
+        child: Container(
           constraints: const BoxConstraints(minHeight: 44),
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: selected ? NpColors.lcdDeep : Colors.transparent,
+              width: 2,
+            ),
+          ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

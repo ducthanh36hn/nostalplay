@@ -4,11 +4,17 @@ import '../../app/theme.dart';
 import '../game_action.dart';
 
 /// Maps a touch position inside a square D-pad of [size] to a direction.
-/// Returns null in the centre dead zone or outside the pad.
-GameAction? dpadDirectionAt(Offset p, double size) {
-  if (p.dx < 0 || p.dy < 0 || p.dx > size || p.dy > size) return null;
+/// Returns null in the centre dead zone or outside the pad. [slop] widens the
+/// accepted area around the pad so a thumb that lands slightly off still counts.
+GameAction? dpadDirectionAt(Offset p, double size, {double slop = 0}) {
+  if (p.dx < -slop ||
+      p.dy < -slop ||
+      p.dx > size + slop ||
+      p.dy > size + slop) {
+    return null;
+  }
   final d = p - Offset(size / 2, size / 2);
-  if (d.distance < size * 0.12) return null;
+  if (d.distance < size * 0.1) return null;
   if (d.dx.abs() > d.dy.abs()) {
     return d.dx > 0 ? GameAction.right : GameAction.left;
   }
@@ -18,11 +24,21 @@ GameAction? dpadDirectionAt(Offset p, double size) {
 /// Cross-shaped D-pad. Each finger holds at most one direction and can slide
 /// between directions; multiple fingers are tracked by pointer id.
 class DPad extends StatefulWidget {
-  const DPad({super.key, this.onActionDown, this.onActionUp, this.size = 132});
+  const DPad({
+    super.key,
+    this.onActionDown,
+    this.onActionUp,
+    this.size = 132,
+    this.touchMargin = 10,
+  });
 
   final GameActionCallback? onActionDown;
   final GameActionCallback? onActionUp;
   final double size;
+
+  /// Extra touch-sensitive band around the drawn pad (also adds that much
+  /// breathing room around it in the layout).
+  final double touchMargin;
 
   @override
   State<DPad> createState() => _DPadState();
@@ -47,8 +63,11 @@ class _DPadState extends State<DPad> {
     if (next != null) widget.onActionDown?.call(next);
   }
 
-  void _event(PointerEvent e) =>
-      _update(e.pointer, dpadDirectionAt(e.localPosition, widget.size));
+  void _event(PointerEvent e) {
+    final m = widget.touchMargin;
+    final local = e.localPosition - Offset(m, m);
+    _update(e.pointer, dpadDirectionAt(local, widget.size, slop: m));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,46 +97,49 @@ class _DPadState extends State<DPad> {
         onPointerMove: _event,
         onPointerUp: (e) => _update(e.pointer, null),
         onPointerCancel: (e) => _update(e.pointer, null),
-        child: SizedBox(
-          width: s,
-          height: s,
-          child: Stack(
-            children: [
-              petal(
-                GameAction.up,
-                Rect.fromLTWH(arm, 0, arm, arm),
-                Icons.arrow_drop_up,
-              ),
-              petal(
-                GameAction.down,
-                Rect.fromLTWH(arm, 2 * arm, arm, arm),
-                Icons.arrow_drop_down,
-              ),
-              petal(
-                GameAction.left,
-                Rect.fromLTWH(0, arm, arm, arm),
-                Icons.arrow_left,
-              ),
-              petal(
-                GameAction.right,
-                Rect.fromLTWH(2 * arm, arm, arm, arm),
-                Icons.arrow_right,
-              ),
-              Positioned.fromRect(
-                rect: Rect.fromLTWH(arm, arm, arm, arm),
-                child: const ColoredBox(color: NpColors.controlCharcoal),
-              ),
-              Center(
-                child: Container(
-                  width: 16,
-                  height: 16,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xFF1E1E1E),
+        child: Padding(
+          padding: EdgeInsets.all(widget.touchMargin),
+          child: SizedBox(
+            width: s,
+            height: s,
+            child: Stack(
+              children: [
+                petal(
+                  GameAction.up,
+                  Rect.fromLTWH(arm, 0, arm, arm),
+                  Icons.arrow_drop_up,
+                ),
+                petal(
+                  GameAction.down,
+                  Rect.fromLTWH(arm, 2 * arm, arm, arm),
+                  Icons.arrow_drop_down,
+                ),
+                petal(
+                  GameAction.left,
+                  Rect.fromLTWH(0, arm, arm, arm),
+                  Icons.arrow_left,
+                ),
+                petal(
+                  GameAction.right,
+                  Rect.fromLTWH(2 * arm, arm, arm, arm),
+                  Icons.arrow_right,
+                ),
+                Positioned.fromRect(
+                  rect: Rect.fromLTWH(arm, arm, arm, arm),
+                  child: const ColoredBox(color: NpColors.controlCharcoal),
+                ),
+                Center(
+                  child: Container(
+                    width: 16,
+                    height: 16,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFF1E1E1E),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

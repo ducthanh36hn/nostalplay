@@ -122,6 +122,40 @@ void main() {
     );
   });
 
+  testWidgets('D-pad moves the Pause cursor and A activates the item', (
+    tester,
+  ) async {
+    await _pumpApp(tester);
+    await _openGame(tester);
+    await _tapButton(tester, 'A');
+    await tester.tap(find.bySemanticsLabel('Tạm dừng'));
+    await tester.pump();
+
+    Future<void> press(Offset fromCentre) async {
+      final g = await tester.startGesture(
+        tester.getCenter(find.byType(DPad)) + fromCentre,
+      );
+      await g.up();
+      await tester.pump();
+    }
+
+    // Down x3 reaches the sound toggle; A switches it off.
+    for (var i = 0; i < 3; i++) {
+      await press(const Offset(0, 45));
+    }
+    await _tapButton(tester, 'A');
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getBool('v1:settings:sound'), isFalse);
+    expect(find.text('TẠM DỪNG'), findsOneWidget, reason: 'still paused');
+
+    // Up wraps back to the first item; A resumes.
+    await press(const Offset(0, -45));
+    await press(const Offset(0, -45));
+    await press(const Offset(0, -45));
+    await _tapButton(tester, 'A');
+    expect(find.text('TẠM DỪNG'), findsNothing);
+  });
+
   testWidgets('system Back pauses, then resumes, then leaves when idle', (
     tester,
   ) async {

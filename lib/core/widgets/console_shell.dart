@@ -187,7 +187,9 @@ class ConsoleShell extends StatelessWidget {
 
   Widget _controls() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      // The D-pad carries its own 10 px touch margin, so this puts the drawn
+      // pad about 14 px from the left edge.
+      padding: const EdgeInsets.only(left: 4, right: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
