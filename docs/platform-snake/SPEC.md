@@ -67,7 +67,7 @@ Người dùng: người chơi phổ thông, thích cảm giác máy game điệ
 - **NFR-2** Hiệu năng: 60 fps ổn định trên máy tầm trung; Snake không giật khi giữ nút.
 - **NFR-3** Độ trễ nút → đổi hướng thấy được trong tick kế tiếp (tick ≤ 200 ms).
 - **NFR-4** Responsive: iPhone SE (nhỏ) tới điện thoại lớn; vỏ máy co giãn theo chiều rộng, nút đủ lớn (≥ 44 pt) và không chồng nhau.
-- **NFR-5** Ngoại tuyến hoàn toàn; không xin quyền hệ thống.
+- **NFR-5** Game chơi hoàn toàn ngoại tuyến; không xin quyền hệ thống nguy hiểm. Ngoại lệ (2026-11-06): thêm quảng cáo AdMob banner ở Home (cần mạng và quyền INTERNET; tự rỗng khi offline, không ảnh hưởng game). Đang dùng ID test của Google; cần thay ID thật và làm form đồng ý (UMP) trước khi phát hành.
 - **NFR-6** Dung lượng: asset game nằm trong `assets/games/<id>/`; ghi nhận kích thước build mỗi lần (xem development-plan §5.1).
 - **NFR-7** Chất lượng: `flutter analyze` sạch; unit test logic Snake; widget test cho điều hướng cơ bản; CI chạy hai việc này.
 - **NFR-8** Bản quyền: chỉ asset/âm thanh tự làm hoặc CC0, ghi nguồn trong `assets/CREDITS.md`.

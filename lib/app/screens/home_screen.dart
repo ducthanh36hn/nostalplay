@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/ads/ad_banner.dart';
 import '../../core/game_definition.dart';
 import '../../core/storage/app_storage.dart';
 import '../routes.dart';
@@ -41,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
+            const AdBanner(),
           ],
         ),
       ),
