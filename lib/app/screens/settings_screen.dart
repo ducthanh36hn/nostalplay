@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/ads/ads_controller.dart';
 import '../../core/settings_controller.dart';
 import '../theme.dart';
 import '../widgets/screen_header.dart';
@@ -14,6 +15,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsController>();
+    final ads = context.watch<AdsController>();
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -38,6 +40,15 @@ class SettingsScreen extends StatelessWidget {
                     value: settings.hapticsEnabled,
                     onChanged: settings.setHaptics,
                   ),
+                  if (ads.privacyOptionsRequired) ...[
+                    const SizedBox(height: 16),
+                    _ActionTile(
+                      icon: Icons.privacy_tip_outlined,
+                      title: 'Quyền riêng tư quảng cáo',
+                      subtitle: 'Xem hoặc đổi lựa chọn đồng ý',
+                      onTap: ads.showPrivacyOptions,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -201,6 +212,77 @@ class _PixelSwitch extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Settings row that opens something instead of toggling.
+class _ActionTile extends StatelessWidget {
+  const _ActionTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: title,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: NpColors.card,
+            border: Border.all(color: NpColors.lcdDark, width: 2),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                color: NpColors.surface,
+                child: Icon(icon, color: NpColors.primary),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontFamily: kMono,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                        color: NpColors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 13,
+                        color: NpColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: NpColors.primary),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

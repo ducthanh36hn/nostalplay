@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/ads/ads_config.dart';
+import '../core/ads/ads_controller.dart';
 import '../core/feedback/game_feedback.dart';
 import '../core/game_definition.dart';
 import '../core/settings_controller.dart';
@@ -16,14 +16,18 @@ class NostalPlayApp extends StatelessWidget {
     required this.registry,
     required this.sfx,
     required this.haptics,
-    this.ads = const AdsConfig.disabled(),
+    this.ads,
   });
+
+  static final AdsController _noAds = AdsController.disabled();
 
   final AppStorage storage;
   final GameRegistry registry;
   final SfxPlayer sfx;
   final HapticsDriver haptics;
-  final AdsConfig ads;
+
+  /// Null means no ads (tests).
+  final AdsController? ads;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,7 @@ class NostalPlayApp extends StatelessWidget {
       providers: [
         Provider<AppStorage>.value(value: storage),
         Provider<GameRegistry>.value(value: registry),
-        Provider<AdsConfig>.value(value: ads),
+        ChangeNotifierProvider<AdsController>.value(value: ads ?? _noAds),
         ChangeNotifierProvider(create: (_) => SettingsController(storage)),
         Provider<GameFeedback>(
           create: (context) => GameFeedback(

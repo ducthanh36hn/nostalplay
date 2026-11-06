@@ -3,11 +3,11 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 import '../../app/theme.dart';
-import 'ads_config.dart';
+import 'ads_controller.dart';
 
-/// Banner ad slot (320x50). Keeps its height whether or not an ad has loaded
-/// so the layout around it never jumps, and quietly stays empty when the ad
-/// fails (offline, no fill). Renders nothing when ads are disabled.
+/// Banner ad slot (320x50). Waits for consent, keeps its height whether or not
+/// an ad has loaded so the layout never jumps, and stays quietly empty when
+/// the ad fails (offline, no fill). Renders nothing when ads are disabled.
 class AdBanner extends StatefulWidget {
   const AdBanner({super.key});
 
@@ -18,16 +18,21 @@ class AdBanner extends StatefulWidget {
 }
 
 class _AdBannerState extends State<AdBanner> {
+  late final AdsController _ads = context.read<AdsController>();
   BannerAd? _ad;
   bool _loaded = false;
 
   @override
   void initState() {
     super.initState();
-    final config = context.read<AdsConfig>();
-    if (!config.enabled) return;
+    _ads.addListener(_maybeLoad);
+    _maybeLoad();
+  }
+
+  void _maybeLoad() {
+    if (_ad != null || !_ads.enabled || !_ads.canShowAds) return;
     _ad = BannerAd(
-      adUnitId: config.bannerUnitId,
+      adUnitId: _ads.config.bannerUnitId,
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
@@ -49,13 +54,14 @@ class _AdBannerState extends State<AdBanner> {
 
   @override
   void dispose() {
+    _ads.removeListener(_maybeLoad);
     _ad?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!context.read<AdsConfig>().enabled) return const SizedBox.shrink();
+    if (!_ads.enabled) return const SizedBox.shrink();
     final ad = _ad;
     return Semantics(
       label: 'Quảng cáo',

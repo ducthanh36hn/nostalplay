@@ -25,6 +25,8 @@
 	<!-- AdMob app ID: Google's TEST ID. Replace with the real one before release. -->
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Dữ liệu này dùng để hiển thị quảng cáo phù hợp hơn với bạn. Bạn vẫn chơi bình thường nếu từ chối.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
