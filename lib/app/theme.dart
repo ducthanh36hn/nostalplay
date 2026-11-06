@@ -67,3 +67,20 @@ ThemeData buildTheme() {
     ),
   );
 }
+
+/// Text style for everything drawn on the LCD (Space Mono supports Vietnamese).
+TextStyle lcdStyle({
+  double size = 13,
+  Color color = NpColors.lcdDeep,
+  FontWeight weight = FontWeight.w700,
+  double letterSpacing = 0.8,
+}) {
+  return TextStyle(
+    fontFamily: kMono,
+    fontWeight: weight,
+    fontSize: size,
+    letterSpacing: letterSpacing,
+    color: color,
+    height: 1.2,
+  );
+}
