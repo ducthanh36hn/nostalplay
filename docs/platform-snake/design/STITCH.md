@@ -9,7 +9,7 @@
 
 | Màn hình | Screen ID | File ảnh | Đánh giá |
 |----------|-----------|----------|----------|
-| App Icon | `034298e70f944f708e9ad8b71c3e3c0c` | `app-icon.png` | Cần bản vuông (xem dưới) |
+| App Icon | `034298e70f944f708e9ad8b71c3e3c0c` | `app-icon.png` | Không dùng: icon thật do `tools/gen_icon.py` tạo (giống Game Boy, bo góc) |
 | 1. Home | `6fbd696592ec4bdf9d55ffdf6108059a` | `home-v2.png` | Đạt |
 | 2. Game Detail | `b6ca5491ca584a3cac466b2804146127` | `game-detail-v3.png` | Đạt, còn lỗi dấu ở 2 tiêu đề |
 | 3. Game Screen (Ready) | `0c5eba096eb844f39c60d51664f59ca1` | `game-screen.png` | Cần chỉnh |
